@@ -6,10 +6,12 @@
 (provide y3)
 (provide y4>62)
 
-(define (y1 record) (cons "feature1" (...))) ; returns the value of feature 1 for a given test sample
-(define (y2 record) (cons "feature2" (...)))
-(define (y3 record) (cons "feature3" (...)))
-(define (y4>62 record) (cons "feature4>62" (...))) ; returns 1 if the value of feature 4 > 62, else 0
+(define y1  (cons "feature1" (lambda (x) (list-ref x 0)))) ; returns the value of feature 1 for a given test sample
+(define y2  (cons "feature2" (lambda (x) (list-ref x 1))))
+(define y3  (cons "feature3" (lambda (x) (list-ref x 2))))
+(define y4>62 (cons "feature4>62" (lambda (x) (if (> (list-ref x 3) 62)
+                                                  1 0
+                                               )))) ; returns 1 if the value of feature 4 > 62, else 0
 
 ;candidate functions for the titanic dataset
 (provide pclass)
@@ -20,13 +22,15 @@
 (provide fare>50)
 (provide emb)
 
-(define (pclass record) (cons "pclass" (...))) ; returns the value of pclass for a given test sample
-(define (sex record) (cons "sex" (...)))
-(define (age>25 record) (cons "age>25" (...)))
-(define (sibsp record) (cons "sibsp" (...)))
-(define (parch record) (cons "parch" (...)))
-(define (fare>50 record) (cons "fare>50" (...)))
-(define (emb record) (cons "emb" (...)))
+(define (pclass record) (cons "pclass" (lambda (x) (list-ref x 0)))) ; returns the value of pclass for a given test sample
+(define (sex record) (cons "sex" (lambda (x) (list-ref x 1))))
+(define (age>25 record) (cons "age>25" (lambda (x) (if (> (list-ref x 2) 25)
+                                                       1 0))))
+(define (sibsp record) (cons "sibsp" (lambda (x) (list-ref x 3))))
+(define (parch record) (cons "parch" (lambda (x) (list-ref x 4))))
+(define (fare>50 record) (cons "fare>50" (lambda (x) (if (> (list-ref x 5) 50)
+                                                         1 0))))
+(define (emb record) (cons "emb" (lambda (x) (list-ref x 6))))
 
 ;candidate functions for the mushroom dataset
 (provide cshape)
