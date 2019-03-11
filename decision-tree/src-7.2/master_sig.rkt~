@@ -2,22 +2,21 @@
 
 (require 2htdp/batch-io)
 
-(require "decision-functions_sig.rkt")
-
+(require "decision-functions.rkt")
 
 ;input dataset
 (provide toytrain)
 (define toytrain "../data/toy_train.csv")
 
 (provide titanictrain)
-(define titanictrain "../data/titanic_train.csv")
+...
 
 (provide mushroomtrain)
-(define mushroomtrain "../data/mushrooms_train.csv")
+...
 
 ;output tree (dot file)
 (provide toyout)
-(define toyout "../output/toy-decision-tree2.dot")
+(define toyout "../output/toy-decision-tree.dot")
 
 ;reading input datasets
 ;read the csv file myfile as a list of strings
@@ -25,30 +24,28 @@
 ;further split each line at commas
 ;so then we have a list of list of strings
 (provide toy-raw)
-(define toy-raw (cdr (read-csv-file toytrain)))
+(define toy-raw (...))
 
 (provide titanic-raw)
-(define titanic-raw (cdr (map (lambda (x) (cddr x)) (read-csv-file titanictrain))))
+...
 
 (provide mushroom-raw)
-(define mushroom-raw (cdr (read-csv-file mushroomtrain)))
+...
 
 ;function to convert data to internal numerical format
 ;(features . result)
 (provide format)
-(define (format data)
-  (cons (map (lambda (x) (string->number x)) (cdr data))  ((lambda (x) (string->number x)) (car data))))
+(define (format data) (...))
 
 ;list of (features . result)
 (provide toy)
-(define toy (map format toy-raw))
+(define toy (...))
 
 (provide titanic)
-(define titanic (map format titanic-raw))
+...
 
 (provide mushroom)
-(define mushroom (map format mushroom-raw))
-
+...
 
 ;============================================================================================================
 ;============================================================================================================
@@ -58,52 +55,27 @@
 ;used to find probability value at leaf
 (provide get-leaf-prob)
 (define (get-leaf-prob data)
- (/ (length (filter (lambda (x) (= (cdr x) 1)) data)) (length data))
+  ...
   )
 
 ;get entropy of dataset
 (provide get-entropy)
 (define (get-entropy data)
-  (let* ([lawra (get-leaf-prob data)]
-        [lasan (- 1 lawra)])
-    (if (or (= 0 lawra) (= 0 lasan)) 0
-    (- 0 (+ (* lawra (log lawra 2)) (* lasan (log lasan 2))))
-  )))
+  ...
+  )
 
 ;find the difference in entropy achieved
 ;by applying a decision function f to the data
 (provide entropy-diff)
-
-(define (help-diff f data lst)
-  (cond [(null? lst) (list (cons (f (car data)) (list data)))]
-        [(equal? (f (car data)) (caar lst)) (cons (cons (caar lst) (cons data (cdar lst))) (cdr lst))]
-        [else (cons (car lst) (help-diff f data (cdr lst)))]
-        ))
-
-(define (help-diff2 f dataset lst)
-  (if (null? dataset) lst
-      (help-diff2 f (cdr dataset) (help-diff f (car dataset) lst))))
-
-(define (split-data f data)
-  (map cdr (help-diff2 f data '())))
-      
-
-
 (define (entropy-diff f data)
-  (let* ([leavemealone (split-data f data)]
-         [odata (get-entropy data)]
-                                           
-         [xyz (map (lambda (x) (* (/ (length x) (length data)) (get-entropy x))) leavemealone)]
-         [sumkalaw (apply + xyz)])
-    (- odata sumkalaw)
-  ))
+  ...
+  )
 
 ;choose the decision function that most reduces entropy of the data
 (provide choose-f)
 (define (choose-f candidates data) ; returns a decision function
-  (let* ([xy (map (lambda (x) (cons x (entropy-diff (cdr x) data))) candidates)])
-    (car (argmax cdr xy))
-  ))
+  ...
+  )
 
 (provide DTree)
 (struct DTree (desc func kids))
@@ -111,26 +83,15 @@
 ;build a decision tree (depth limited) from the candidate decision functions and data
 (provide build-tree)
 (define (build-tree candidates data depth)
-  (if (or (null? candidates) (= depth 0))
-      (DTree (~a (get-leaf-prob data)) (lambda (x) x) '())
-  (let* ([cose (choose-f candidates data)]
-         [fcose (cdr cose)]
-         [spdk (split-data fcose data)]
-         [delc (remove cose candidates)]
-         [kid (map (lambda (x) (build-tree delc x (- depth 1))) spdk)]
-         [spd (map (lambda (x) (fcose (caar x))) spdk)]
-         [zipped (map (lambda (x) (cons (list-ref spd x) (list-ref kid x))) (build-list (length kid) values))]
-         [fun (lambda (x) (cdr (append*  (filter (lambda (y) (equal? (fcose x) (car y))) zipped))))])
-    (DTree (car cose) fun kid)
-  )))
+  ...
+  )
 
 ;given a test data (features only), make a decision according to a decision tree
 ;returns probability of the test data being classified as 1
 (provide make-decision)
 (define (make-decision tree test)
-  (if (null? (DTree-kids tree)) (string->number (DTree-desc tree))
-      (make-decision ((DTree-func tree) test) test)
-  ))
+  ...
+  )
 
 ;============================================================================================================
 ;============================================================================================================
