@@ -1,5 +1,7 @@
 #lang racket
 
+(require 2htdp/batch-io)
+
 (require "decision-functions.rkt")
 
 ;input dataset
@@ -102,22 +104,45 @@
 
 ;generate tree edges (parent to child) and recurse to generate sub trees
 (define (dot-child children prefix tabs)
-  (apply string-append (map (lambda (t) (string-append tabs "r" prefix "--" "r" prefix (~a (cdr t)) "[label=\"" (~a (cdr t)) "\"];" "\n" (dot-helper (car t) (string-append prefix (~a (cdr t))) (string-append tabs "\t")))) children))
+  (apply string-append
+         (map (lambda (t)
+                (string-append tabs
+                               "r" prefix
+                               "--"
+                               "r" prefix "t" (~a (cdr t))
+                               "[label=\"" (~a (cdr t)) "\"];" "\n"
+                               (dot-helper (car t)
+                                           (string-append prefix "t" (~a (cdr t)))
+                                           (string-append tabs "\t")
+                                           )
+                               )
+                ) children
+                  )
+         )
   )
 
 ;generate tree nodes and call function to generate edges
 (define (dot-helper tree prefix tabs)
   (let* ([node (match tree [(DTree d f c) (cons d c)])]
-         [f (car node)]
+         [d (car node)]
          [c (cdr node)])
-    (string-append tabs "r" prefix "[label=\"" d "\"];" "\n\n" (dot-child (pair-idx c 0) prefix tabs))
+    (string-append tabs
+                   "r"
+                   prefix
+                   "[label=\"" d "\"];" "\n\n"
+                   (dot-child (pair-idx c 0) prefix tabs)
+                   )
     )
   )
 
 ;output tree (dot file)
 (provide display-tree)
-(define (display-tree tree)
-  (write-file dtfile (string-append "graph \"decision-tree\" {" "\n" (dot-helper tree "" "\t") "}"))
+(define (display-tree tree outfile)
+  (write-file outfile (string-append "graph \"decision-tree\" {" "\n"
+                                     (dot-helper tree "" "\t")
+                                     "}"
+                                     )
+              )
   )
 ;============================================================================================================
 ;============================================================================================================
